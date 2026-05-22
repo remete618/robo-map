@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bay Area Robotics, Interactive Map</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+  :root {
+    --accent: #0f62fe;
+    --bg: #f6f7fb;
+    --ink: #0b0d12;
+    --muted: #5b6478;
+    --card: #ffffff;
+    --border: #e6e8ef;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--ink); background: var(--bg); }
+
+  .layout { display: flex; height: 100vh; width: 100%; }
+  #map { flex: 1; height: 100vh; }
+
+  .sidebar {
+    width: 320px; height: 100vh; background: var(--card);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    box-shadow: 2px 0 10px rgba(15, 23, 42, 0.04);
+    z-index: 1001;
+  }
+  .sidebar-header {
+    padding: 16px 18px 12px; border-bottom: 1px solid var(--border);
+    background: var(--card);
+  }
+  .sidebar-header h1 {
+    margin: 0 0 4px; font-size: 16px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brand-logo {
+    width: 22px; height: 22px; object-fit: contain;
+    border-radius: 5px; flex-shrink: 0;
+  }
+  .sidebar-header p {
+    margin: 0; font-size: 12px; color: var(--muted);
+  }
+  .sidebar-header .quote {
+    margin: 6px 0 0; font-size: 12px; color: var(--muted);
+    font-style: italic; line-height: 1.4;
+  }
+  .sidebar-header .quote em { font-style: italic; color: var(--ink); }
+  .sidebar-header .quote .attrib { font-style: normal; }
+  .sidebar-header .quote .reply {
+    display: block; font-style: normal; font-size: 11.5px;
+    margin-top: 2px; color: var(--muted);
+  }
+  .sidebar-search {
+    margin: 10px 0 0; width: 100%;
+    padding: 8px 10px; font-size: 13px;
+    border: 1px solid var(--border); border-radius: 8px;
+    outline: none; transition: border-color 0.15s;
+  }
+  .sidebar-search:focus { border-color: var(--accent); }
+
+  .sidebar-list {
+    flex: 1; overflow-y: auto;
+    padding: 6px 8px;
+  }
+  .sb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 8px;
+    cursor: pointer; transition: background 0.12s;
+    border: 1px solid transparent;
+  }
+  .sb-item:hover { background: #f0f3fa; border-color: var(--border); }
+  .sb-item.active { background: #e8efff; border-color: var(--accent); }
+  .sb-logo {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #fff; border: 1px solid var(--border);
+    object-fit: contain; padding: 3px; flex-shrink: 0;
+  }
+  .sb-logo-fb {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; flex-shrink: 0;
+  }
+  .sb-meta { min-width: 0; flex: 1; }
+  .sb-name { font-size: 13.5px; font-weight: 600; line-height: 1.2; }
+  .sb-cat { font-size: 11px; color: var(--muted); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .sidebar-footer {
+    padding: 10px 18px; border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--muted);
+  }
+
+  .map-overlay {
+    position: absolute; top: 14px; right: 14px; z-index: 1000;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .count-pill {
+    background: var(--accent); color: white; border-radius: 999px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  }
+  .basemap-switcher {
+    display: inline-flex; background: var(--card);
+    border: 1px solid var(--border); border-radius: 999px;
+    padding: 4px; gap: 2px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  }
+  .basemap-switcher button {
+    border: none; background: transparent;
+    padding: 6px 12px; font-size: 12px; font-weight: 500;
+    color: var(--muted); cursor: pointer;
+    border-radius: 999px;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+  }
+  .basemap-switcher button:hover { color: var(--ink); background: #f0f3fa; }
+  .basemap-switcher button.active {
+    background: var(--accent); color: white;
+  }
+  @media (max-width: 720px) {
+    .basemap-switcher button { padding: 6px 8px; font-size: 11px; }
+  }
+
+  .logo-marker {
+    background: white;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    width: 48px !important;
+    height: 48px !important;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    cursor: pointer;
+  }
+  .logo-marker:hover {
+    transform: scale(1.15);
+    z-index: 1000;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.28), 0 0 0 2px var(--accent);
+  }
+  .logo-marker img {
+    width: 40px; height: 40px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .logo-marker .fallback {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    background: var(--accent); color: white; font-weight: 700; font-size: 18px;
+    border-radius: 50%;
+  }
+
+  .company-popup { min-width: 240px; max-width: 280px; font-size: 13.5px; line-height: 1.45; }
+  .company-popup .pop-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .company-popup .pop-logo {
+    width: 48px; height: 48px; object-fit: contain;
+    background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 6px;
+    flex-shrink: 0;
+  }
+  .company-popup .pop-logo-fb {
+    width: 48px; height: 48px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 20px; border-radius: 10px;
+    flex-shrink: 0;
+  }
+  .company-popup h3 { margin: 0; font-size: 16px; }
+  .company-popup .pop-cat { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .company-popup p.blurb { margin: 6px 0 8px; color: #2a3142; }
+  .company-popup .meta { font-size: 12px; color: var(--muted); margin: 4px 0; }
+  .company-popup a { color: var(--accent); text-decoration: none; font-weight: 500; }
+  .company-popup a:hover { text-decoration: underline; }
+
+  .leaflet-popup-content-wrapper { border-radius: 12px; }
+  .leaflet-popup-tip { box-shadow: 0 3px 12px rgba(0,0,0,0.1); }
+
+  .tt {
+    background: rgba(11, 13, 18, 0.9); color: white;
+    border: none; border-radius: 6px; padding: 4px 8px;
+    font-size: 12px; font-weight: 500;
+  }
+  .tt:before { display: none; }
+
+  @media (max-width: 720px) {
+    .sidebar { width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>
+        <img class="brand-logo"
+             src="https://logo.clearbit.com/foxglove.dev"
+             data-stage="0"
+             onerror="window.logoFallback(this, 'foxglove.dev', 'F', 'brand-logo')"
+             alt="Foxglove">
+        Bay Area Robotics
+      </h1>
+      <p class="quote">A (marginally) less terrible robotics map.</p>
+      <input class="sidebar-search" id="search" type="text" placeholder="Search by name or category…" />
+    </div>
+    <div class="sidebar-list" id="sidebar-list"></div>
+    <div class="sidebar-footer">
+      Tiles © OpenStreetMap · Logos via Clearbit · Hand-curated
+    </div>
+  </aside>
+
+  <div id="map"></div>
+
+  <div class="map-overlay">
+    <div class="basemap-switcher" id="basemap-switcher">
+      <button data-layer="streets" class="active">Map</button>
+      <button data-layer="satellite">Satellite</button>
+      <button data-layer="hybrid">Hybrid</button>
+      <button data-layer="light">Light</button>
+      <button data-layer="dark">Dark</button>
+    </div>
+    <div class="count-pill" id="count-pill">0 companies</div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const companies = [
+    // --- VERIFIED ACTIVE (May 2026 audit) ---
+    { name: "Zoox", domain: "zoox.com", lat: 37.561, lng: -122.260,
+      address: "1149 Chess Dr, Foster City, CA", category: "Robotaxis",
+      blurb: "Amazon-owned robotaxi developer in early commercial deployment with purpose-built bidirectional vehicles.",
+      url: "https://zoox.com" },
+    { name: "Saildrone", domain: "saildrone.com", lat: 37.787, lng: -122.319,
+      address: "1050 W Tower Ave, Alameda, CA", category: "Maritime autonomy",
+      blurb: "Uncrewed surface vessels for ocean data and defense (incl. Spectre ASW drone boat with Lockheed).",
+      url: "https://saildrone.com" },
+    { name: "Skydio", domain: "skydio.com", lat: 37.541, lng: -122.314,
+      address: "3000 Clearview Way, San Mateo, CA", category: "Drones",
+      blurb: "Autonomous drones for enterprise, public safety, and defense.",
+      url: "https://skydio.com" },
+    { name: "Cobalt AI", domain: "cobaltai.com", lat: 37.547, lng: -122.305,
+      address: "2121 S El Camino Real, San Mateo, CA", category: "AI security",
+      blurb: "Rebranded from Cobalt Robotics; now AI-based video monitoring and security platform.",
+      url: "https://cobaltai.com" },
+    { name: "Bear Robotics", domain: "bearrobotics.ai", lat: 37.487, lng: -122.226,
+      address: "785 Broadway St, Redwood City, CA", category: "Service robots",
+      blurb: "Servi robots for restaurants and hospitality.",
+      url: "https://bearrobotics.ai" },
+    { name: "Dexterity", domain: "dexterity.ai", lat: 37.491, lng: -122.220,
+      address: "1205 Veterans Blvd, Redwood City, CA", category: "Manipulation",
+      blurb: "AI-powered industrial robots for logistics, warehouses, and supply chain.",
+      url: "https://dexterity.ai" },
+    { name: "Loft Orbital", domain: "loftorbital.com", lat: 37.771, lng: -122.413,
+      address: "321 11th St, San Francisco, CA", category: "Space / satellites",
+      blurb: "Satellite-as-a-service: hosts customer payloads on standardized buses.",
+      url: "https://loftorbital.com" },
+    { name: "Planet Labs", domain: "planet.com", lat: 37.781, lng: -122.398,
+      address: "645 Harrison St, San Francisco, CA", category: "Space / Earth imaging",
+      blurb: "Earth-imaging satellite constellation; public company (NYSE: PL).",
+      url: "https://planet.com" },
+    { name: "Astranis", domain: "astranis.com", lat: 37.760, lng: -122.387,
+      address: "Pier 70, San Francisco, CA", category: "Space / comms satellites",
+      blurb: "Small geostationary satellites delivering broadband to underserved regions.",
+      url: "https://astranis.com" },
+    { name: "Built Robotics", domain: "builtrobotics.com", lat: 37.777, lng: -122.410,
+      address: "225 7th St, San Francisco, CA", category: "Construction autonomy",
+      blurb: "Autonomy retrofits for construction equipment (excavators, dozers).",
+      url: "https://builtrobotics.com" },
+    { name: "Foundry Robotics", domain: "foundryrobotics.ai", lat: 37.775, lng: -122.418,
+      address: "San Francisco, CA", category: "Manipulation / VLA",
+      blurb: "AI-first assembly robotics + dual-use contract manufacturing using VLA foundation models. Founded Oct 2025.",
+      url: "https://foundryrobotics.ai" },
+    { name: "Cruise (GM)", domain: "getcruise.com", lat: 37.781, lng: -122.392,
+      address: "333 Brannan St, San Francisco, CA", category: "ADAS / former robotaxi",
+      blurb: "Robotaxi operations wound down Dec 2024; ~2,300 staff folded into GM's personal-vehicle ADAS effort.",
+      url: "https://getcruise.com" },
+    { name: "Foxglove", domain: "foxglove.dev", lat: 37.790, lng: -122.402,
+      address: "548 Market St, San Francisco, CA", category: "The Robotics developer tool",
+      blurb: "Visualisation, data storage and Data Search & Curation.",
+      url: "https://foxglove.dev" },
+    { name: "Matic", domain: "maticrobots.com", lat: 37.408, lng: -122.078,
+      address: "339 N Bernardo Ave, Mountain View, CA", category: "Home robots",
+      blurb: "Fully autonomous home vacuum/mop robot, scaling to 60K units in 2026.",
+      url: "https://maticrobots.com" },
+    { name: "1X Technologies", domain: "1x.tech", lat: 37.4080, lng: -122.149,
+      address: "1200 Page Mill Rd, Palo Alto, CA", category: "Humanoid robots",
+      blurb: "Humanoid robots (NEO) for the home; HQ moved to Palo Alto July 2025. Manufacturing in Hayward + Moss, Norway.",
+      url: "https://1x.tech" },
+    { name: "Nuro", domain: "nuro.ai", lat: 37.4131, lng: -122.0712,
+      address: "1300 Terra Bella Ave, Mountain View, CA", category: "Autonomous vehicles",
+      blurb: "Pivoted from delivery bots to licensing AV stack (Lucid/Uber robotaxi Jan 2026).",
+      url: "https://nuro.ai" },
+    { name: "Aurora Innovation", domain: "aurora.tech", lat: 37.3950, lng: -122.0800,
+      address: "Mountain View, CA (office, HQ in Pittsburgh)", category: "Autonomous trucking",
+      blurb: "Autonomous trucking (Aurora Driver). Commercial freight in TX. Mountain View is engineering office.",
+      url: "https://aurora.tech" },
+    { name: "RIOS Intelligent Machines", domain: "rios.ai", lat: 37.453, lng: -122.180,
+      address: "Menlo Park, CA", category: "Factory automation",
+      blurb: "AI-powered dexterous robots for factory assembly, CPG, F&B.",
+      url: "https://rios.ai" },
+
+    // --- ADDED FROM RESEARCH PASS ---
+    { name: "Waymo", domain: "waymo.com", lat: 37.4220, lng: -122.0841,
+      address: "Mountain View, CA", category: "Robotaxis",
+      blurb: "Alphabet's robotaxi service running 500K+ paid rides/week across 10 US metros on 3,700+ vehicles.",
+      url: "https://waymo.com" },
+    { name: "Tesla (Optimus / Autopilot)", domain: "tesla.com", lat: 37.3947, lng: -122.1503,
+      address: "Palo Alto, CA (engineering HQ)", category: "Humanoid / AV",
+      blurb: "Engineering HQ for Optimus humanoid and Autopilot/FSD; Fremont factory being retooled for Optimus.",
+      url: "https://tesla.com" },
+    { name: "Figure AI", domain: "figure.ai", lat: 37.4032, lng: -122.0232,
+      address: "1247 Elko Dr, Sunnyvale, CA", category: "Humanoid robots",
+      blurb: "$39B-valued humanoid maker; Figure 03 home robot launched Oct 2025, BMW factory deployments.",
+      url: "https://figure.ai" },
+    { name: "Physical Intelligence (π)", domain: "physicalintelligence.company", lat: 37.7610, lng: -122.4115,
+      address: "396 Treat Ave, San Francisco, CA", category: "AI foundations for robotics",
+      blurb: "Robot foundation-model lab ($5.6B valuation, $600M Series B Nov 2025) building generalist VLA models.",
+      url: "https://physicalintelligence.company" },
+    { name: "Applied Intuition", domain: "appliedintuition.com", lat: 37.4060, lng: -122.0850,
+      address: "Mountain View, CA", category: "Simulation / dev tools",
+      blurb: "$15B-valued AV and defense simulation + autonomy stack; 18 of top 20 OEMs are customers.",
+      url: "https://appliedintuition.com" },
+    { name: "Kodiak AI", domain: "kodiak.ai", lat: 37.4100, lng: -122.0900,
+      address: "Mountain View, CA", category: "Autonomous trucking",
+      blurb: "Public (de-SPAC Sep 2025) autonomous trucking; driverless Class 8 fleet for Atlas in the Permian.",
+      url: "https://kodiak.ai" },
+    { name: "Gatik", domain: "gatik.ai", lat: 37.4070, lng: -122.0760,
+      address: "Mountain View, CA", category: "Autonomous trucking",
+      blurb: "Middle-mile autonomous trucking; $600M+ contracted revenue, 60K driverless orders for Walmart/Kroger.",
+      url: "https://gatik.ai" },
+    { name: "Zipline", domain: "zipline.com", lat: 37.6547, lng: -122.4077,
+      address: "333 Corey Way, South San Francisco, CA", category: "Drone delivery",
+      blurb: "World's largest autonomous delivery system: fixed-wing Zips plus P2 home-delivery drones.",
+      url: "https://zipline.com" },
+    { name: "Matternet", domain: "matternet.com", lat: 37.4192, lng: -122.0780,
+      address: "355 Ravendale Dr, Mountain View, CA", category: "Drone delivery",
+      blurb: "FAA-certified M2 drones for home and medical delivery.",
+      url: "https://matternet.com" },
+    { name: "Wing (Alphabet)", domain: "wing.com", lat: 37.4419, lng: -122.1430,
+      address: "Palo Alto, CA", category: "Drone delivery",
+      blurb: "Alphabet drone-delivery subsidiary; 750K+ residential deliveries.",
+      url: "https://wing.com" },
+    { name: "Reliable Robotics", domain: "reliable.co", lat: 37.4137, lng: -122.0498,
+      address: "Mountain View, CA", category: "Autonomous aviation",
+      blurb: "Autonomous cargo aircraft program; FAA Part 135 subsidiary Reliable Airways.",
+      url: "https://reliable.co" },
+    { name: "Joby Aviation", domain: "jobyaviation.com", lat: 37.5097, lng: -122.2603,
+      address: "San Carlos, CA (engineering ops)", category: "eVTOL",
+      blurb: "eVTOL air taxi flying piloted demos in NYC and SF; autonomous follow-on planned.",
+      url: "https://jobyaviation.com" },
+    { name: "Wisk Aero", domain: "wisk.aero", lat: 37.4156, lng: -122.0648,
+      address: "Mountain View, CA", category: "Autonomous eVTOL",
+      blurb: "Boeing-owned, designed-autonomous-from-launch 4-seat eVTOL; first flight Dec 2025.",
+      url: "https://wisk.aero" },
+    { name: "Glydways", domain: "glydways.com", lat: 37.6547, lng: -122.4077,
+      address: "South San Francisco, CA", category: "Autonomous transit",
+      blurb: "$250M-funded autonomous PRT pods; San Jose Diridon-airport line and Richmond Hilltop testbed.",
+      url: "https://glydways.com" },
+    { name: "Chef Robotics", domain: "chefrobotics.ai", lat: 37.7700, lng: -122.4100,
+      address: "San Francisco, CA", category: "Food manipulation",
+      blurb: "AI meal-assembly arms; 70M+ servings completed.",
+      url: "https://chefrobotics.ai" },
+    { name: "Ambi Robotics", domain: "ambirobotics.com", lat: 37.8694, lng: -122.2974,
+      address: "Berkeley, CA", category: "Warehouse / logistics",
+      blurb: "UC Berkeley Dex-Net spinout; AI parcel-sortation robots deployed with USPS, Pitney Bowes.",
+      url: "https://ambirobotics.com" },
+    { name: "Glacier", domain: "endwaste.io", lat: 37.7480, lng: -122.4180,
+      address: "San Francisco, CA", category: "Recycling robotics",
+      blurb: "AI-vision sorting arms in 24+ MRFs; Amazon recycling partner.",
+      url: "https://endwaste.io" },
+    { name: "Knightscope", domain: "knightscope.com", lat: 37.4060, lng: -122.0840,
+      address: "Mountain View, CA", category: "Security robots",
+      blurb: "Public (Nasdaq) maker of K5/K7 autonomous security robots patrolling 24/7 across US sites.",
+      url: "https://knightscope.com" },
+    { name: "Intuitive Surgical", domain: "intuitive.com", lat: 37.3760, lng: -122.0270,
+      address: "Sunnyvale, CA", category: "Surgical robotics",
+      blurb: "$10B-revenue da Vinci surgical-robot maker; placed 1,721 systems in 2025 (870 were da Vinci 5).",
+      url: "https://intuitive.com" },
+    { name: "Auris Health (J&J)", domain: "jnjmedtech.com", lat: 37.4848, lng: -122.2281,
+      address: "Redwood City, CA", category: "Surgical robotics",
+      blurb: "J&J's $3.4B-acquired robotic endoscopy platform (Monarch). Active dev site in Redwood City.",
+      url: "https://www.jnjmedtech.com/en-US/companies/auris-health" },
+    { name: "Anduril Industries", domain: "anduril.com", lat: 37.4084, lng: -122.0712,
+      address: "Mountain View, CA (BA office, HQ Costa Mesa)", category: "Defense / autonomy",
+      blurb: "$60B-valued autonomous defense (Lattice, Fury YFQ-44A CCA, Roadrunner). Significant BA engineering ops.",
+      url: "https://anduril.com" },
+    { name: "Bedrock Robotics", domain: "bedrockrobotics.com", lat: 37.7600, lng: -122.4100,
+      address: "San Francisco, CA", category: "Construction autonomy",
+      blurb: "Ex-Waymo founders; \"Operator\" retrofit autonomy kit for excavators/dozers. $270M Series B Feb 2026.",
+      url: "https://bedrockrobotics.com" },
+    { name: "Hayden AI", domain: "hayden.ai", lat: 37.7820, lng: -122.3960,
+      address: "San Francisco, CA", category: "Urban autonomy",
+      blurb: "AI cameras on 2,100+ buses for bus-lane / bike-lane enforcement (NYC, DC, LA, Oakland).",
+      url: "https://hayden.ai" },
+    { name: "Sofar Ocean", domain: "sofarocean.com", lat: 37.7790, lng: -122.3890,
+      address: "San Francisco, CA", category: "Maritime / ocean sensing",
+      blurb: "World's largest privately-owned ocean-sensing platform (Spotter buoys, Wayfinder routing AI).",
+      url: "https://sofarocean.com" }
+  ];
+
+  const map = L.map('map', { zoomControl: true }).setView([37.62, -122.30], 11);
+
+  const basemaps = {
+    streets: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors', maxZoom: 19
+    }),
+    satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri', maxZoom: 19
+    }),
+    hybrid: L.layerGroup([
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles © Esri', maxZoom: 19
+      }),
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19, opacity: 0.9
+      }),
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19, opacity: 0.85
+      })
+    ]),
+    light: L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap, © CARTO', maxZoom: 20, subdomains: 'abcd'
+    }),
+    dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap, © CARTO', maxZoom: 20, subdomains: 'abcd'
+    })
+  };
+
+  let currentBase = basemaps.streets.addTo(map);
+
+  document.getElementById('basemap-switcher').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-layer]');
+    if (!btn) return;
+    const next = basemaps[btn.dataset.layer];
+    if (!next || next === currentBase) return;
+    map.removeLayer(currentBase);
+    next.addTo(map);
+    currentBase = next;
+    document.querySelectorAll('.basemap-switcher button').forEach(b =>
+      b.classList.toggle('active', b === btn)
+    );
+  });
+
+  // Multi-source logo loader: Clearbit (richest) → Google favicon (universal) → text fallback
+  window.logoFallback = function(el, domain, initials, fbClass) {
+    const stage = parseInt(el.dataset.stage || '0', 10);
+    el.dataset.stage = stage + 1;
+    if (stage === 0) {
+      el.src = `https://www.google.com/s2/favicons?domain=${domain}&sz=128`;
+    } else if (stage === 1) {
+      el.src = `https://icons.duckduckgo.com/ip3/${domain}.ico`;
+    } else {
+      el.outerHTML = `<div class="${fbClass}">${initials}</div>`;
+    }
+  };
+
+  function logoImgHtml(c, fallbackClass) {
+    const initials = c.name[0];
+    return `<img
+      src="https://logo.clearbit.com/${c.domain}"
+      alt="${c.name}"
+      data-stage="0"
+      onerror="window.logoFallback(this, '${c.domain}', '${initials}', '${fallbackClass}')"
+    />`;
+  }
+
+  function buildIcon(c) {
+    return L.divIcon({
+      className: 'logo-marker',
+      html: logoImgHtml(c, 'fallback'),
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      popupAnchor: [0, -24]
+    });
+  }
+
+  function buildPopup(c) {
+    const initials = c.name[0];
+    return `
+      <div class="company-popup">
+        <div class="pop-header">
+          <img
+            class="pop-logo"
+            src="https://logo.clearbit.com/${c.domain}"
+            data-stage="0"
+            onerror="window.logoFallback(this, '${c.domain}', '${initials}', 'pop-logo-fb')"
+          >
+          <div>
+            <h3>${c.name}</h3>
+            <div class="pop-cat">${c.category}</div>
+          </div>
+        </div>
+        <p class="blurb">${c.blurb}</p>
+        <div class="meta">📍 ${c.address}</div>
+        <div class="meta">🔗 <a href="${c.url}" target="_blank" rel="noopener">${c.url.replace(/^https?:\/\//, '')}</a></div>
+      </div>
+    `;
+  }
+
+  const markers = {};
+  companies.forEach((c, idx) => {
+    const marker = L.marker([c.lat, c.lng], { icon: buildIcon(c) }).addTo(map);
+    marker.bindTooltip(c.name, { direction: 'top', offset: [0, -22], className: 'tt' });
+    marker.bindPopup(buildPopup(c), { maxWidth: 300 });
+    marker.on('popupopen', () => setActive(idx));
+    markers[idx] = marker;
+  });
+
+  document.getElementById('count-pill').textContent = `${companies.length} companies`;
+
+  const listEl = document.getElementById('sidebar-list');
+  const searchEl = document.getElementById('search');
+
+  function renderList(filter = '') {
+    const f = filter.trim().toLowerCase();
+    listEl.innerHTML = '';
+    const sorted = companies
+      .map((c, idx) => ({ c, idx }))
+      .filter(({ c }) => !f || c.name.toLowerCase().includes(f) || c.category.toLowerCase().includes(f))
+      .sort((a, b) => a.c.name.localeCompare(b.c.name));
+
+    sorted.forEach(({ c, idx }) => {
+      const row = document.createElement('div');
+      row.className = 'sb-item';
+      row.dataset.idx = idx;
+      row.innerHTML = `
+        <img class="sb-logo"
+             src="https://logo.clearbit.com/${c.domain}"
+             data-stage="0"
+             onerror="window.logoFallback(this, '${c.domain}', '${c.name[0]}', 'sb-logo-fb')">
+        <div class="sb-meta">
+          <div class="sb-name">${c.name}</div>
+          <div class="sb-cat">${c.category}</div>
+        </div>
+      `;
+      row.addEventListener('click', () => {
+        const m = markers[idx];
+        map.flyTo([c.lat, c.lng], 14, { duration: 0.7 });
+        setTimeout(() => m.openPopup(), 750);
+        setActive(idx);
+      });
+      listEl.appendChild(row);
+    });
+  }
+
+  function setActive(idx) {
+    document.querySelectorAll('.sb-item').forEach(el => {
+      el.classList.toggle('active', Number(el.dataset.idx) === idx);
+    });
+    const active = document.querySelector('.sb-item.active');
+    if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  searchEl.addEventListener('input', e => renderList(e.target.value));
+  renderList();
+</script>
+</body>
+</html>
