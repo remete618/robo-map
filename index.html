@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bay Area Robotics, Interactive Map</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="apple-touch-icon" href="foxglove-icon.png">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <style>
   :root {
@@ -195,11 +197,7 @@
   <aside class="sidebar">
     <div class="sidebar-header">
       <h1>
-        <img class="brand-logo"
-             src="https://logo.clearbit.com/foxglove.dev"
-             data-stage="0"
-             onerror="window.logoFallback(this, 'foxglove.dev', 'F', 'brand-logo')"
-             alt="Foxglove">
+        <img class="brand-logo" src="foxglove-icon.png" alt="Foxglove">
         Bay Area Robotics
       </h1>
       <p class="quote">A (marginally) less terrible robotics map.</p>
@@ -215,10 +213,10 @@
 
   <div class="map-overlay">
     <div class="basemap-switcher" id="basemap-switcher">
-      <button data-layer="streets" class="active">Map</button>
+      <button data-layer="streets">Map</button>
       <button data-layer="satellite">Satellite</button>
       <button data-layer="hybrid">Hybrid</button>
-      <button data-layer="light">Light</button>
+      <button data-layer="light" class="active">Light</button>
       <button data-layer="dark">Dark</button>
     </div>
     <div class="count-pill" id="count-pill">0 companies</div>
@@ -429,7 +427,7 @@
     })
   };
 
-  let currentBase = basemaps.streets.addTo(map);
+  let currentBase = basemaps.light.addTo(map);
 
   document.getElementById('basemap-switcher').addEventListener('click', e => {
     const btn = e.target.closest('button[data-layer]');
