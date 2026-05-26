@@ -62,32 +62,51 @@
   }
   .sidebar-search:focus { border-color: var(--accent); }
 
+  .region-overlay {
+    position: absolute; top: 14px;
+    left: 50%; transform: translateX(-50%);
+    z-index: 1000;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 5px;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.14);
+    max-width: calc(100vw - 660px);
+    overflow: hidden;
+  }
   .region-tabs {
-    margin: 10px -4px 0;
-    display: flex; gap: 4px;
+    display: flex; gap: 3px;
     overflow-x: auto;
-    padding: 4px;
     scrollbar-width: thin;
+    white-space: nowrap;
   }
   .region-tabs::-webkit-scrollbar { height: 4px; }
   .region-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
   .region-tabs button {
-    border: 1px solid var(--border); background: var(--card);
-    padding: 5px 10px; font-size: 11.5px; font-weight: 500;
+    border: none; background: transparent;
+    padding: 8px 14px; font-size: 13px; font-weight: 600;
     color: var(--muted); cursor: pointer;
     border-radius: 999px;
     white-space: nowrap; flex-shrink: 0;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: background 0.15s, color 0.15s;
     font-family: inherit;
   }
   .region-tabs button:hover {
     color: var(--ink); background: #f0f3fa;
   }
   .region-tabs button.active {
-    background: var(--accent); color: white; border-color: var(--accent);
+    background: var(--accent); color: white;
   }
   .region-tabs button .stub {
-    opacity: 0.5; font-size: 10px; margin-left: 4px;
+    opacity: 0.55; font-size: 11px; margin-left: 5px; font-weight: 500;
+  }
+  .region-tabs button.active .stub { opacity: 0.85; }
+  @media (max-width: 1100px) {
+    .region-overlay { max-width: calc(100vw - 380px); }
+    .region-tabs button { padding: 7px 11px; font-size: 12px; }
+  }
+  @media (max-width: 720px) {
+    .region-overlay { max-width: calc(100vw - 40px); top: auto; bottom: 14px; }
   }
 
   .sidebar-list {
@@ -229,18 +248,6 @@
         Bay Area Robotics
       </h1>
       <p class="quote">A (marginally) less terrible robotics map.</p>
-      <div class="region-tabs" id="region-tabs">
-        <button data-region="na">NA<span class="stub">97</span></button>
-        <button data-region="us">US<span class="stub">97</span></button>
-        <button data-region="bay-area" class="active">Bay Area<span class="stub">42</span></button>
-        <button data-region="latam">LATAM<span class="stub">soon</span></button>
-        <button data-region="emea">EMEA<span class="stub">39</span></button>
-        <button data-region="europe">Europe<span class="stub">37</span></button>
-        <button data-region="switzerland">Switzerland<span class="stub">6</span></button>
-        <button data-region="dach">DACH<span class="stub">18</span></button>
-        <button data-region="apac">APAC<span class="stub">50</span></button>
-        <button data-region="china">China<span class="stub">soon</span></button>
-      </div>
       <input class="sidebar-search" id="search" type="text" placeholder="Search by name or category…" />
     </div>
     <div class="sidebar-list" id="sidebar-list"></div>
@@ -250,6 +257,21 @@
   </aside>
 
   <div id="map"></div>
+
+  <div class="region-overlay">
+    <div class="region-tabs" id="region-tabs">
+      <button data-region="na">NA<span class="stub">100</span></button>
+      <button data-region="us">US<span class="stub">97</span></button>
+      <button data-region="bay-area" class="active">Bay Area<span class="stub">42</span></button>
+      <button data-region="latam">LATAM<span class="stub">soon</span></button>
+      <button data-region="emea">EMEA<span class="stub">39</span></button>
+      <button data-region="europe">Europe<span class="stub">37</span></button>
+      <button data-region="dach">DACH<span class="stub">18</span></button>
+      <button data-region="switzerland">Switzerland<span class="stub">6</span></button>
+      <button data-region="apac">APAC<span class="stub">50</span></button>
+      <button data-region="china">China<span class="stub">soon</span></button>
+    </div>
+  </div>
 
   <div class="map-overlay">
     <div class="basemap-switcher" id="basemap-switcher">
@@ -1102,7 +1124,21 @@
     { name: "Rockwell Automation", domain: "rockwellautomation.com", lat: 43.0389, lng: -87.9065,
       address: "Milwaukee, WI", category: "Industrial automation",
       blurb: "Industrial control, motion, and robotics integration platform. Owns OTTO Motors AMRs. NYSE: ROK, top US industrial automation vendor.",
-      url: "https://rockwellautomation.com", regions: ["us", "na"] }
+      url: "https://rockwellautomation.com", regions: ["us", "na"] },
+
+    // --- NA: Canada ---
+    { name: "Sanctuary AI", domain: "sanctuary.ai", lat: 49.2827, lng: -123.1207,
+      address: "Vancouver, BC, Canada", category: "Humanoid robots",
+      blurb: "Phoenix humanoid robot for general-purpose physical work. $58M Series A 2024, Magna and Microsoft backing.",
+      url: "https://sanctuary.ai", regions: ["na"] },
+    { name: "Kinova", domain: "kinovarobotics.com", lat: 45.6125, lng: -73.8358,
+      address: "Boisbriand, Quebec, Canada", category: "Robotic arms",
+      blurb: "Lightweight 6/7-DoF robot arms (Gen3, Link 6) for research, medical, and industrial applications.",
+      url: "https://kinovarobotics.com", regions: ["na"] },
+    { name: "Waabi", domain: "waabi.ai", lat: 43.6532, lng: -79.3832,
+      address: "Toronto, Ontario, Canada", category: "Autonomous trucking",
+      blurb: "Generative AI for autonomous trucking. Founded by Raquel Urtasun (ex-Uber ATG). Volvo Autonomous Solutions partnership.",
+      url: "https://waabi.ai", regions: ["na"] }
   ];
 
   const map = L.map('map', { zoomControl: true }).setView([37.62, -122.30], 11);
