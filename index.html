@@ -62,6 +62,34 @@
   }
   .sidebar-search:focus { border-color: var(--accent); }
 
+  .region-tabs {
+    margin: 10px -4px 0;
+    display: flex; gap: 4px;
+    overflow-x: auto;
+    padding: 4px;
+    scrollbar-width: thin;
+  }
+  .region-tabs::-webkit-scrollbar { height: 4px; }
+  .region-tabs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .region-tabs button {
+    border: 1px solid var(--border); background: var(--card);
+    padding: 5px 10px; font-size: 11.5px; font-weight: 500;
+    color: var(--muted); cursor: pointer;
+    border-radius: 999px;
+    white-space: nowrap; flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    font-family: inherit;
+  }
+  .region-tabs button:hover {
+    color: var(--ink); background: #f0f3fa;
+  }
+  .region-tabs button.active {
+    background: var(--accent); color: white; border-color: var(--accent);
+  }
+  .region-tabs button .stub {
+    opacity: 0.5; font-size: 10px; margin-left: 4px;
+  }
+
   .sidebar-list {
     flex: 1; overflow-y: auto;
     padding: 6px 8px;
@@ -201,6 +229,17 @@
         Bay Area Robotics
       </h1>
       <p class="quote">A (marginally) less terrible robotics map.</p>
+      <div class="region-tabs" id="region-tabs">
+        <button data-region="na">NA</button>
+        <button data-region="us">US</button>
+        <button data-region="bay-area" class="active">Bay Area</button>
+        <button data-region="latam">LATAM<span class="stub">soon</span></button>
+        <button data-region="emea">EMEA<span class="stub">5</span></button>
+        <button data-region="europe">Europe<span class="stub">5</span></button>
+        <button data-region="switzerland">Switzerland<span class="stub">3</span></button>
+        <button data-region="apac">APAC<span class="stub">soon</span></button>
+        <button data-region="china">China<span class="stub">soon</span></button>
+      </div>
       <input class="sidebar-search" id="search" type="text" placeholder="Search by name or category…" />
     </div>
     <div class="sidebar-list" id="sidebar-list"></div>
@@ -230,173 +269,195 @@
     { name: "Zoox", domain: "zoox.com", lat: 37.561, lng: -122.260,
       address: "1149 Chess Dr, Foster City, CA", category: "Robotaxis",
       blurb: "Amazon-owned robotaxi developer in early commercial deployment with purpose-built bidirectional vehicles.",
-      url: "https://zoox.com" },
+      url: "https://zoox.com", regions: ["bay-area", "us", "na"] },
     { name: "Saildrone", domain: "saildrone.com", lat: 37.787, lng: -122.319,
       address: "1050 W Tower Ave, Alameda, CA", category: "Maritime autonomy",
       blurb: "Uncrewed surface vessels for ocean data and defense (incl. Spectre ASW drone boat with Lockheed).",
-      url: "https://saildrone.com" },
+      url: "https://saildrone.com", regions: ["bay-area", "us", "na"] },
     { name: "Skydio", domain: "skydio.com", lat: 37.541, lng: -122.314,
       address: "3000 Clearview Way, San Mateo, CA", category: "Drones",
       blurb: "Autonomous drones for enterprise, public safety, and defense.",
-      url: "https://skydio.com" },
+      url: "https://skydio.com", regions: ["bay-area", "us", "na"] },
     { name: "Cobalt AI", domain: "cobaltai.com", lat: 37.547, lng: -122.305,
       address: "2121 S El Camino Real, San Mateo, CA", category: "AI security",
       blurb: "Rebranded from Cobalt Robotics; now AI-based video monitoring and security platform.",
-      url: "https://cobaltai.com" },
+      url: "https://cobaltai.com", regions: ["bay-area", "us", "na"] },
     { name: "Bear Robotics", domain: "bearrobotics.ai", lat: 37.487, lng: -122.226,
       address: "785 Broadway St, Redwood City, CA", category: "Service robots",
       blurb: "Servi robots for restaurants and hospitality.",
-      url: "https://bearrobotics.ai" },
+      url: "https://bearrobotics.ai", regions: ["bay-area", "us", "na"] },
     { name: "Dexterity", domain: "dexterity.ai", lat: 37.491, lng: -122.220,
       address: "1205 Veterans Blvd, Redwood City, CA", category: "Manipulation",
       blurb: "AI-powered industrial robots for logistics, warehouses, and supply chain.",
-      url: "https://dexterity.ai" },
+      url: "https://dexterity.ai", regions: ["bay-area", "us", "na"] },
     { name: "Loft Orbital", domain: "loftorbital.com", lat: 37.771, lng: -122.413,
       address: "321 11th St, San Francisco, CA", category: "Space / satellites",
       blurb: "Satellite-as-a-service: hosts customer payloads on standardized buses.",
-      url: "https://loftorbital.com" },
+      url: "https://loftorbital.com", regions: ["bay-area", "us", "na"] },
     { name: "Planet Labs", domain: "planet.com", lat: 37.781, lng: -122.398,
       address: "645 Harrison St, San Francisco, CA", category: "Space / Earth imaging",
       blurb: "Earth-imaging satellite constellation; public company (NYSE: PL).",
-      url: "https://planet.com" },
+      url: "https://planet.com", regions: ["bay-area", "us", "na"] },
     { name: "Astranis", domain: "astranis.com", lat: 37.760, lng: -122.387,
       address: "Pier 70, San Francisco, CA", category: "Space / comms satellites",
       blurb: "Small geostationary satellites delivering broadband to underserved regions.",
-      url: "https://astranis.com" },
+      url: "https://astranis.com", regions: ["bay-area", "us", "na"] },
     { name: "Built Robotics", domain: "builtrobotics.com", lat: 37.777, lng: -122.410,
       address: "225 7th St, San Francisco, CA", category: "Construction autonomy",
       blurb: "Autonomy retrofits for construction equipment (excavators, dozers).",
-      url: "https://builtrobotics.com" },
+      url: "https://builtrobotics.com", regions: ["bay-area", "us", "na"] },
     { name: "Foundry Robotics", domain: "foundryrobotics.ai", lat: 37.775, lng: -122.418,
       address: "San Francisco, CA", category: "Manipulation / VLA",
       blurb: "AI-first assembly robotics + dual-use contract manufacturing using VLA foundation models. Founded Oct 2025.",
-      url: "https://foundryrobotics.ai" },
+      url: "https://foundryrobotics.ai", regions: ["bay-area", "us", "na"] },
     { name: "Cruise (GM)", domain: "getcruise.com", lat: 37.781, lng: -122.392,
       address: "333 Brannan St, San Francisco, CA", category: "ADAS / former robotaxi",
       blurb: "Robotaxi operations wound down Dec 2024; ~2,300 staff folded into GM's personal-vehicle ADAS effort.",
-      url: "https://getcruise.com" },
+      url: "https://getcruise.com", regions: ["bay-area", "us", "na"] },
     { name: "Foxglove", domain: "foxglove.dev", lat: 37.790, lng: -122.402,
       address: "548 Market St, San Francisco, CA", category: "The Robotics developer tool",
       blurb: "Visualisation, data storage and Data Search & Curation.",
-      url: "https://foxglove.dev" },
+      url: "https://foxglove.dev", regions: ["bay-area", "us", "na"] },
     { name: "Matic", domain: "maticrobots.com", lat: 37.408, lng: -122.078,
       address: "339 N Bernardo Ave, Mountain View, CA", category: "Home robots",
       blurb: "Fully autonomous home vacuum/mop robot, scaling to 60K units in 2026.",
-      url: "https://maticrobots.com" },
+      url: "https://maticrobots.com", regions: ["bay-area", "us", "na"] },
     { name: "1X Technologies", domain: "1x.tech", lat: 37.4080, lng: -122.149,
       address: "1200 Page Mill Rd, Palo Alto, CA", category: "Humanoid robots",
       blurb: "Humanoid robots (NEO) for the home; HQ moved to Palo Alto July 2025. Manufacturing in Hayward + Moss, Norway.",
-      url: "https://1x.tech" },
+      url: "https://1x.tech", regions: ["bay-area", "us", "na"] },
     { name: "Nuro", domain: "nuro.ai", lat: 37.4131, lng: -122.0712,
       address: "1300 Terra Bella Ave, Mountain View, CA", category: "Autonomous vehicles",
       blurb: "Pivoted from delivery bots to licensing AV stack (Lucid/Uber robotaxi Jan 2026).",
-      url: "https://nuro.ai" },
+      url: "https://nuro.ai", regions: ["bay-area", "us", "na"] },
     { name: "Aurora Innovation", domain: "aurora.tech", lat: 37.3950, lng: -122.0800,
       address: "Mountain View, CA (office, HQ in Pittsburgh)", category: "Autonomous trucking",
       blurb: "Autonomous trucking (Aurora Driver). Commercial freight in TX. Mountain View is engineering office.",
-      url: "https://aurora.tech" },
+      url: "https://aurora.tech", regions: ["bay-area", "us", "na"] },
     { name: "RIOS Intelligent Machines", domain: "rios.ai", lat: 37.453, lng: -122.180,
       address: "Menlo Park, CA", category: "Factory automation",
       blurb: "AI-powered dexterous robots for factory assembly, CPG, F&B.",
-      url: "https://rios.ai" },
+      url: "https://rios.ai", regions: ["bay-area", "us", "na"] },
 
     // --- ADDED FROM RESEARCH PASS ---
     { name: "Waymo", domain: "waymo.com", lat: 37.4220, lng: -122.0841,
       address: "Mountain View, CA", category: "Robotaxis",
       blurb: "Alphabet's robotaxi service running 500K+ paid rides/week across 10 US metros on 3,700+ vehicles.",
-      url: "https://waymo.com" },
+      url: "https://waymo.com", regions: ["bay-area", "us", "na"] },
     { name: "Tesla (Optimus / Autopilot)", domain: "tesla.com", lat: 37.3947, lng: -122.1503,
       address: "Palo Alto, CA (engineering HQ)", category: "Humanoid / AV",
       blurb: "Engineering HQ for Optimus humanoid and Autopilot/FSD; Fremont factory being retooled for Optimus.",
-      url: "https://tesla.com" },
+      url: "https://tesla.com", regions: ["bay-area", "us", "na"] },
     { name: "Figure AI", domain: "figure.ai", lat: 37.4032, lng: -122.0232,
       address: "1247 Elko Dr, Sunnyvale, CA", category: "Humanoid robots",
       blurb: "$39B-valued humanoid maker; Figure 03 home robot launched Oct 2025, BMW factory deployments.",
-      url: "https://figure.ai" },
+      url: "https://figure.ai", regions: ["bay-area", "us", "na"] },
     { name: "Physical Intelligence (π)", domain: "physicalintelligence.company", lat: 37.7610, lng: -122.4115,
       address: "396 Treat Ave, San Francisco, CA", category: "AI foundations for robotics",
       blurb: "Robot foundation-model lab ($5.6B valuation, $600M Series B Nov 2025) building generalist VLA models.",
-      url: "https://physicalintelligence.company" },
+      url: "https://physicalintelligence.company", regions: ["bay-area", "us", "na"] },
     { name: "Applied Intuition", domain: "appliedintuition.com", lat: 37.4060, lng: -122.0850,
       address: "Mountain View, CA", category: "Simulation / dev tools",
       blurb: "$15B-valued AV and defense simulation + autonomy stack; 18 of top 20 OEMs are customers.",
-      url: "https://appliedintuition.com" },
+      url: "https://appliedintuition.com", regions: ["bay-area", "us", "na"] },
     { name: "Kodiak AI", domain: "kodiak.ai", lat: 37.4100, lng: -122.0900,
       address: "Mountain View, CA", category: "Autonomous trucking",
       blurb: "Public (de-SPAC Sep 2025) autonomous trucking; driverless Class 8 fleet for Atlas in the Permian.",
-      url: "https://kodiak.ai" },
+      url: "https://kodiak.ai", regions: ["bay-area", "us", "na"] },
     { name: "Gatik", domain: "gatik.ai", lat: 37.4070, lng: -122.0760,
       address: "Mountain View, CA", category: "Autonomous trucking",
       blurb: "Middle-mile autonomous trucking; $600M+ contracted revenue, 60K driverless orders for Walmart/Kroger.",
-      url: "https://gatik.ai" },
+      url: "https://gatik.ai", regions: ["bay-area", "us", "na"] },
     { name: "Zipline", domain: "zipline.com", lat: 37.6547, lng: -122.4077,
       address: "333 Corey Way, South San Francisco, CA", category: "Drone delivery",
       blurb: "World's largest autonomous delivery system: fixed-wing Zips plus P2 home-delivery drones.",
-      url: "https://zipline.com" },
+      url: "https://zipline.com", regions: ["bay-area", "us", "na"] },
     { name: "Matternet", domain: "matternet.com", lat: 37.4192, lng: -122.0780,
       address: "355 Ravendale Dr, Mountain View, CA", category: "Drone delivery",
       blurb: "FAA-certified M2 drones for home and medical delivery.",
-      url: "https://matternet.com" },
+      url: "https://matternet.com", regions: ["bay-area", "us", "na"] },
     { name: "Wing (Alphabet)", domain: "wing.com", lat: 37.4419, lng: -122.1430,
       address: "Palo Alto, CA", category: "Drone delivery",
       blurb: "Alphabet drone-delivery subsidiary; 750K+ residential deliveries.",
-      url: "https://wing.com" },
+      url: "https://wing.com", regions: ["bay-area", "us", "na"] },
     { name: "Reliable Robotics", domain: "reliable.co", lat: 37.4137, lng: -122.0498,
       address: "Mountain View, CA", category: "Autonomous aviation",
       blurb: "Autonomous cargo aircraft program; FAA Part 135 subsidiary Reliable Airways.",
-      url: "https://reliable.co" },
+      url: "https://reliable.co", regions: ["bay-area", "us", "na"] },
     { name: "Joby Aviation", domain: "jobyaviation.com", lat: 37.5097, lng: -122.2603,
       address: "San Carlos, CA (engineering ops)", category: "eVTOL",
       blurb: "eVTOL air taxi flying piloted demos in NYC and SF; autonomous follow-on planned.",
-      url: "https://jobyaviation.com" },
+      url: "https://jobyaviation.com", regions: ["bay-area", "us", "na"] },
     { name: "Wisk Aero", domain: "wisk.aero", lat: 37.4156, lng: -122.0648,
       address: "Mountain View, CA", category: "Autonomous eVTOL",
       blurb: "Boeing-owned, designed-autonomous-from-launch 4-seat eVTOL; first flight Dec 2025.",
-      url: "https://wisk.aero" },
+      url: "https://wisk.aero", regions: ["bay-area", "us", "na"] },
     { name: "Glydways", domain: "glydways.com", lat: 37.6547, lng: -122.4077,
       address: "South San Francisco, CA", category: "Autonomous transit",
       blurb: "$250M-funded autonomous PRT pods; San Jose Diridon-airport line and Richmond Hilltop testbed.",
-      url: "https://glydways.com" },
+      url: "https://glydways.com", regions: ["bay-area", "us", "na"] },
     { name: "Chef Robotics", domain: "chefrobotics.ai", lat: 37.7700, lng: -122.4100,
       address: "San Francisco, CA", category: "Food manipulation",
       blurb: "AI meal-assembly arms; 70M+ servings completed.",
-      url: "https://chefrobotics.ai" },
+      url: "https://chefrobotics.ai", regions: ["bay-area", "us", "na"] },
     { name: "Ambi Robotics", domain: "ambirobotics.com", lat: 37.8694, lng: -122.2974,
       address: "Berkeley, CA", category: "Warehouse / logistics",
       blurb: "UC Berkeley Dex-Net spinout; AI parcel-sortation robots deployed with USPS, Pitney Bowes.",
-      url: "https://ambirobotics.com" },
+      url: "https://ambirobotics.com", regions: ["bay-area", "us", "na"] },
     { name: "Glacier", domain: "endwaste.io", lat: 37.7480, lng: -122.4180,
       address: "San Francisco, CA", category: "Recycling robotics",
       blurb: "AI-vision sorting arms in 24+ MRFs; Amazon recycling partner.",
-      url: "https://endwaste.io" },
+      url: "https://endwaste.io", regions: ["bay-area", "us", "na"] },
     { name: "Knightscope", domain: "knightscope.com", lat: 37.4060, lng: -122.0840,
       address: "Mountain View, CA", category: "Security robots",
       blurb: "Public (Nasdaq) maker of K5/K7 autonomous security robots patrolling 24/7 across US sites.",
-      url: "https://knightscope.com" },
+      url: "https://knightscope.com", regions: ["bay-area", "us", "na"] },
     { name: "Intuitive Surgical", domain: "intuitive.com", lat: 37.3760, lng: -122.0270,
       address: "Sunnyvale, CA", category: "Surgical robotics",
       blurb: "$10B-revenue da Vinci surgical-robot maker; placed 1,721 systems in 2025 (870 were da Vinci 5).",
-      url: "https://intuitive.com" },
+      url: "https://intuitive.com", regions: ["bay-area", "us", "na"] },
     { name: "Auris Health (J&J)", domain: "jnjmedtech.com", lat: 37.4848, lng: -122.2281,
       address: "Redwood City, CA", category: "Surgical robotics",
       blurb: "J&J's $3.4B-acquired robotic endoscopy platform (Monarch). Active dev site in Redwood City.",
-      url: "https://www.jnjmedtech.com/en-US/companies/auris-health" },
+      url: "https://www.jnjmedtech.com/en-US/companies/auris-health", regions: ["bay-area", "us", "na"] },
     { name: "Anduril Industries", domain: "anduril.com", lat: 37.4084, lng: -122.0712,
       address: "Mountain View, CA (BA office, HQ Costa Mesa)", category: "Defense / autonomy",
       blurb: "$60B-valued autonomous defense (Lattice, Fury YFQ-44A CCA, Roadrunner). Significant BA engineering ops.",
-      url: "https://anduril.com" },
+      url: "https://anduril.com", regions: ["bay-area", "us", "na"] },
     { name: "Bedrock Robotics", domain: "bedrockrobotics.com", lat: 37.7600, lng: -122.4100,
       address: "San Francisco, CA", category: "Construction autonomy",
       blurb: "Ex-Waymo founders; \"Operator\" retrofit autonomy kit for excavators/dozers. $270M Series B Feb 2026.",
-      url: "https://bedrockrobotics.com" },
+      url: "https://bedrockrobotics.com", regions: ["bay-area", "us", "na"] },
     { name: "Hayden AI", domain: "hayden.ai", lat: 37.7820, lng: -122.3960,
       address: "San Francisco, CA", category: "Urban autonomy",
       blurb: "AI cameras on 2,100+ buses for bus-lane / bike-lane enforcement (NYC, DC, LA, Oakland).",
-      url: "https://hayden.ai" },
+      url: "https://hayden.ai", regions: ["bay-area", "us", "na"] },
     { name: "Sofar Ocean", domain: "sofarocean.com", lat: 37.7790, lng: -122.3890,
       address: "San Francisco, CA", category: "Maritime / ocean sensing",
       blurb: "World's largest privately-owned ocean-sensing platform (Spotter buoys, Wayfinder routing AI).",
-      url: "https://sofarocean.com" }
+      url: "https://sofarocean.com", regions: ["bay-area", "us", "na"] },
+
+    // --- EMEA placeholders (preview only, full deep dive pending) ---
+    { name: "ANYbotics", domain: "anybotics.com", lat: 47.4150, lng: 8.5469,
+      address: "Zurich, Switzerland", category: "Quadruped robots",
+      blurb: "Industrial inspection quadruped robot (ANYmal) used in oil/gas, energy, mining.",
+      url: "https://anybotics.com", regions: ["switzerland", "europe", "emea"] },
+    { name: "Verity", domain: "verity.net", lat: 47.3769, lng: 8.5417,
+      address: "Zurich, Switzerland", category: "Autonomous drones",
+      blurb: "Self-flying drones for warehouse inventory and indoor industrial inspection.",
+      url: "https://verity.net", regions: ["switzerland", "europe", "emea"] },
+    { name: "Sevensense Robotics", domain: "sevensense.ch", lat: 47.4081, lng: 8.5072,
+      address: "Zurich, Switzerland", category: "Mobile robot autonomy",
+      blurb: "Visual SLAM and autonomy stack for AMRs and forklifts (acquired by ABB 2024).",
+      url: "https://sevensense.ch", regions: ["switzerland", "europe", "emea"] },
+    { name: "Universal Robots", domain: "universal-robots.com", lat: 55.3683, lng: 10.4274,
+      address: "Odense, Denmark", category: "Collaborative arms",
+      blurb: "Pioneered the cobot category (UR3/5/10/16/20). Owned by Teradyne.",
+      url: "https://universal-robots.com", regions: ["europe", "emea"] },
+    { name: "Franka Robotics", domain: "franka.de", lat: 48.1351, lng: 11.5820,
+      address: "Munich, Germany", category: "Collaborative arms",
+      blurb: "Force-sensitive 7-DoF research and industrial collaborative arms.",
+      url: "https://franka.de", regions: ["europe", "emea"] }
   ];
 
   const map = L.map('map', { zoomControl: true }).setView([37.62, -122.30], 11);
@@ -498,16 +559,45 @@
     `;
   }
 
-  const markers = {};
-  companies.forEach((c, idx) => {
-    const marker = L.marker([c.lat, c.lng], { icon: buildIcon(c) }).addTo(map);
-    marker.bindTooltip(c.name, { direction: 'top', offset: [0, -22], className: 'tt' });
-    marker.bindPopup(buildPopup(c), { maxWidth: 300 });
-    marker.on('popupopen', () => setActive(idx));
-    markers[idx] = marker;
-  });
+  // Region metadata: where the map flies to when each tab is selected
+  const regions = {
+    "na":          { label: "NA",          center: [40, -100],       zoom: 4 },
+    "us":          { label: "US",          center: [39, -98],        zoom: 4 },
+    "bay-area":    { label: "Bay Area",    center: [37.62, -122.30], zoom: 11 },
+    "latam":       { label: "LATAM",       center: [-15, -60],       zoom: 3 },
+    "emea":        { label: "EMEA",        center: [40, 25],         zoom: 3 },
+    "europe":      { label: "Europe",      center: [50, 15],         zoom: 4 },
+    "switzerland": { label: "Switzerland", center: [46.8, 8.2],      zoom: 8 },
+    "apac":        { label: "APAC",        center: [10, 110],        zoom: 3 },
+    "china":       { label: "China",       center: [35, 105],        zoom: 4 }
+  };
 
-  document.getElementById('count-pill').textContent = `${companies.length} companies`;
+  let currentRegion = "bay-area";
+  const markerGroup = L.layerGroup().addTo(map);
+  const markers = {};
+
+  function companiesInRegion(region) {
+    return companies.filter(c => Array.isArray(c.regions) && c.regions.includes(region));
+  }
+
+  function renderMarkers() {
+    markerGroup.clearLayers();
+    Object.keys(markers).forEach(k => delete markers[k]);
+    const filtered = companiesInRegion(currentRegion);
+    filtered.forEach(c => {
+      const origIdx = companies.indexOf(c);
+      const marker = L.marker([c.lat, c.lng], { icon: buildIcon(c) });
+      marker.bindTooltip(c.name, { direction: 'top', offset: [0, -22], className: 'tt' });
+      marker.bindPopup(buildPopup(c), { maxWidth: 300 });
+      marker.on('popupopen', () => setActive(origIdx));
+      marker.addTo(markerGroup);
+      markers[origIdx] = marker;
+    });
+    const pill = document.getElementById('count-pill');
+    pill.textContent = filtered.length === 0
+      ? `${regions[currentRegion].label}: coming soon`
+      : `${filtered.length} companies`;
+  }
 
   const listEl = document.getElementById('sidebar-list');
   const searchEl = document.getElementById('search');
@@ -515,8 +605,15 @@
   function renderList(filter = '') {
     const f = filter.trim().toLowerCase();
     listEl.innerHTML = '';
-    const sorted = companies
-      .map((c, idx) => ({ c, idx }))
+    const inRegion = companiesInRegion(currentRegion);
+
+    if (inRegion.length === 0) {
+      listEl.innerHTML = `<div style="padding: 24px 16px; text-align: center; color: var(--muted); font-size: 13px; line-height: 1.5;">No companies yet for <strong>${regions[currentRegion].label}</strong>.<br><br>Deep dive pending. The structure works, data comes next.</div>`;
+      return;
+    }
+
+    const sorted = inRegion
+      .map(c => ({ c, idx: companies.indexOf(c) }))
       .filter(({ c }) => !f || c.name.toLowerCase().includes(f) || c.category.toLowerCase().includes(f))
       .sort((a, b) => a.c.name.localeCompare(b.c.name));
 
@@ -536,6 +633,7 @@
       `;
       row.addEventListener('click', () => {
         const m = markers[idx];
+        if (!m) return;
         map.flyTo([c.lat, c.lng], 14, { duration: 0.7 });
         setTimeout(() => m.openPopup(), 750);
         setActive(idx);
@@ -552,7 +650,25 @@
     if (active) active.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   }
 
+  function switchRegion(name) {
+    if (!regions[name] || name === currentRegion) return;
+    currentRegion = name;
+    document.querySelectorAll('.region-tabs button').forEach(b => {
+      b.classList.toggle('active', b.dataset.region === name);
+    });
+    const r = regions[name];
+    map.flyTo(r.center, r.zoom, { duration: 0.9 });
+    renderMarkers();
+    renderList(searchEl.value);
+  }
+
+  document.getElementById('region-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-region]');
+    if (btn) switchRegion(btn.dataset.region);
+  });
+
   searchEl.addEventListener('input', e => renderList(e.target.value));
+  renderMarkers();
   renderList();
 </script>
 </body>
