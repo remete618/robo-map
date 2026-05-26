@@ -230,13 +230,13 @@
       </h1>
       <p class="quote">A (marginally) less terrible robotics map.</p>
       <div class="region-tabs" id="region-tabs">
-        <button data-region="na">NA</button>
-        <button data-region="us">US</button>
-        <button data-region="bay-area" class="active">Bay Area</button>
+        <button data-region="na">NA<span class="stub">42</span></button>
+        <button data-region="us">US<span class="stub">42</span></button>
+        <button data-region="bay-area" class="active">Bay Area<span class="stub">42</span></button>
         <button data-region="latam">LATAM<span class="stub">soon</span></button>
-        <button data-region="emea">EMEA<span class="stub">5</span></button>
-        <button data-region="europe">Europe<span class="stub">5</span></button>
-        <button data-region="switzerland">Switzerland<span class="stub">3</span></button>
+        <button data-region="emea">EMEA<span class="stub">35</span></button>
+        <button data-region="europe">Europe<span class="stub">33</span></button>
+        <button data-region="switzerland">Switzerland<span class="stub">5</span></button>
         <button data-region="apac">APAC<span class="stub">soon</span></button>
         <button data-region="china">China<span class="stub">soon</span></button>
       </div>
@@ -457,7 +457,155 @@
     { name: "Franka Robotics", domain: "franka.de", lat: 48.1351, lng: 11.5820,
       address: "Munich, Germany", category: "Collaborative arms",
       blurb: "Force-sensitive 7-DoF research and industrial collaborative arms.",
-      url: "https://franka.de", regions: ["europe", "emea"] }
+      url: "https://franka.de", regions: ["europe", "emea"] },
+
+    // --- EMEA: Norway ---
+    { name: "AutoStore", domain: "autostore.com", lat: 59.5333, lng: 5.6667,
+      address: "Nedre Vats, Norway", category: "Warehouse robots",
+      blurb: "Cube-storage automation with bin-picking robots on a grid. Deployed in 1,500+ warehouses worldwide. Oslo-listed.",
+      url: "https://autostore.com", regions: ["europe", "emea"] },
+    { name: "Kongsberg Maritime", domain: "kongsberg.com", lat: 59.6675, lng: 9.6500,
+      address: "Kongsberg, Norway", category: "Maritime / underwater",
+      blurb: "HUGIN and MUNIN AUV families plus integrated ship-control and autonomy stacks for offshore and defense.",
+      url: "https://kongsberg.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: Sweden ---
+    { name: "Einride", domain: "einride.tech", lat: 59.3293, lng: 18.0686,
+      address: "Stockholm, Sweden", category: "Autonomous trucking",
+      blurb: "Autonomous electric freight trucks (cab-less Pod) and EV logistics platform. L4 deployments in Ohio and UAE.",
+      url: "https://einride.tech", regions: ["europe", "emea"] },
+    { name: "Furhat Robotics", domain: "furhatrobotics.com", lat: 59.3293, lng: 18.0686,
+      address: "Stockholm, Sweden", category: "Social robotics",
+      blurb: "Social robot with back-projected animated face for conversational AI in research, healthcare, retail.",
+      url: "https://furhatrobotics.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: Germany ---
+    { name: "Helsing", domain: "helsing.ai", lat: 48.1351, lng: 11.5820,
+      address: "Munich, Germany", category: "Defense / autonomy",
+      blurb: "AI defense software and HX-2 loitering munitions for European militaries. Germany's most valuable startup.",
+      url: "https://helsing.ai", regions: ["europe", "emea"] },
+    { name: "Isar Aerospace", domain: "isaraerospace.com", lat: 48.2659, lng: 11.6713,
+      address: "Munich, Germany", category: "Space / launch",
+      blurb: "Spectrum small-launch rocket. Targeting first European orbital flight from a private launcher in 2026.",
+      url: "https://isaraerospace.com", regions: ["europe", "emea"] },
+    { name: "KUKA", domain: "kuka.com", lat: 48.3705, lng: 10.8978,
+      address: "Augsburg, Germany", category: "Industrial / cobots",
+      blurb: "Big-four industrial robot maker. Arms, mobile platforms, complete production cells. Owned by Midea, operated from Augsburg.",
+      url: "https://kuka.com", regions: ["europe", "emea"] },
+    { name: "Magazino", domain: "magazino.eu", lat: 48.1351, lng: 11.5820,
+      address: "Munich, Germany", category: "Warehouse robots",
+      blurb: "Perception-driven mobile robots (SOTO, TORU) that pick individual items inside warehouses. Owned by Jungheinrich.",
+      url: "https://magazino.eu", regions: ["europe", "emea"] },
+    { name: "NEURA Robotics", domain: "neura-robotics.com", lat: 48.5364, lng: 9.2789,
+      address: "Metzingen, Germany", category: "Humanoid robots",
+      blurb: "4NE-1 cognitive humanoid plus MAiRA cobot, for industrial picking and home/healthcare tasks. €4B valuation.",
+      url: "https://neura-robotics.com", regions: ["europe", "emea"] },
+    { name: "Quantum Systems", domain: "quantum-systems.com", lat: 48.1083, lng: 11.2972,
+      address: "Gilching, Germany", category: "Drones (defense)",
+      blurb: "Trinity, Vector, and Reliant fixed-wing VTOL drones for ISR and mapping. €3B valuation, deployed in Ukraine.",
+      url: "https://quantum-systems.com", regions: ["europe", "emea"] },
+    { name: "STARK", domain: "stark.com", lat: 48.1351, lng: 11.5820,
+      address: "Munich, Germany", category: "Defense / autonomy",
+      blurb: "Virtus loitering munitions and autonomous strike systems for European defense. Sequoia/Thiel-backed.",
+      url: "https://stark.com", regions: ["europe", "emea"] },
+    { name: "Wandelbots", domain: "wandelbots.com", lat: 51.0504, lng: 13.7373,
+      address: "Dresden, Germany", category: "Robotics dev tools",
+      blurb: "NOVA agnostic robot OS and TracePen no-code teaching device. Insight/Microsoft/EQT-backed.",
+      url: "https://wandelbots.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: Switzerland ---
+    { name: "Distalmotion", domain: "distalmotion.com", lat: 46.5197, lng: 6.6323,
+      address: "Lausanne, Switzerland", category: "Surgical robotics",
+      blurb: "Dexter hybrid laparoscopic-robotic surgery system for general surgery and gynecology. Three FDA clearances.",
+      url: "https://distalmotion.com", regions: ["switzerland", "europe", "emea"] },
+    { name: "Ecorobotix", domain: "ecorobotix.com", lat: 46.7785, lng: 6.6411,
+      address: "Yverdon-les-Bains, Switzerland", category: "Agricultural",
+      blurb: "ARA ultra-precision sprayer. Cuts herbicide use by ~95% via plant-by-plant targeting.",
+      url: "https://ecorobotix.com", regions: ["switzerland", "europe", "emea"] },
+
+    // --- EMEA: Italy ---
+    { name: "Comau", domain: "comau.com", lat: 45.0703, lng: 7.6869,
+      address: "Turin, Italy", category: "Industrial / cobots",
+      blurb: "Industrial automation and welding/assembly robots for automotive, aerospace, EV battery lines. Stellantis 49.9% owner.",
+      url: "https://comau.com", regions: ["europe", "emea"] },
+    { name: "Generative Bionics", domain: "generativebionics.com", lat: 44.4056, lng: 8.9463,
+      address: "Genoa, Italy", category: "Humanoid robots",
+      blurb: "IIT spinout building Italian humanoids for manufacturing, logistics, healthcare. €70M seed (Tether-backed).",
+      url: "https://generativebionics.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: France ---
+    { name: "Exotec", domain: "exotec.com", lat: 50.6781, lng: 3.1503,
+      address: "Croix, France", category: "Warehouse robots",
+      blurb: "Skypod 3D-grid AS/RS system for e-commerce and retail fulfillment. France's first industrial unicorn.",
+      url: "https://exotec.com", regions: ["europe", "emea"] },
+    { name: "Naïo Technologies", domain: "naio-technologies.com", lat: 43.5267, lng: 1.5414,
+      address: "Escalquens, France", category: "Agricultural",
+      blurb: "Autonomous weeding and vineyard robots (Oz, Ted, Orio). 350+ deployed across 5 continents.",
+      url: "https://naio-technologies.com", regions: ["europe", "emea"] },
+    { name: "Pollen Robotics", domain: "pollen-robotics.com", lat: 44.8378, lng: -0.5792,
+      address: "Bordeaux, France", category: "Humanoid robots",
+      blurb: "Open-source Reachy 2 humanoid sold as a developer platform. Acquired by Hugging Face 2025.",
+      url: "https://pollen-robotics.com", regions: ["europe", "emea"] },
+    { name: "Wandercraft", domain: "wandercraft.eu", lat: 48.8566, lng: 2.3522,
+      address: "Paris, France", category: "Exoskeletons / humanoids",
+      blurb: "Atalante X rehab exoskeleton, Eve personal exoskeleton, Calvin-40 industrial humanoid. Renault's first humanoid customer.",
+      url: "https://wandercraft.eu", regions: ["europe", "emea"] },
+
+    // --- EMEA: UK ---
+    { name: "Engineered Arts", domain: "engineeredarts.co.uk", lat: 50.1551, lng: -5.0656,
+      address: "Falmouth, United Kingdom", category: "Humanoid robots",
+      blurb: "Expressive humanoid robots (Ameca, Mesmer) for HRI research, museums, brand activations.",
+      url: "https://engineeredarts.co.uk", regions: ["europe", "emea"] },
+    { name: "Saab Seaeye", domain: "saabseaeye.com", lat: 50.8525, lng: -1.1789,
+      address: "Fareham, United Kingdom", category: "Maritime / underwater",
+      blurb: "Electric ROV family (Panther, Falcon, Leopard) for offshore energy, defense, science. World leader in electric ROVs.",
+      url: "https://saabseaeye.com", regions: ["europe", "emea"] },
+    { name: "Wayve", domain: "wayve.ai", lat: 51.5074, lng: -0.1278,
+      address: "London, United Kingdom", category: "Autonomous vehicles",
+      blurb: "End-to-end neural-net AV stack (AV2.0) for L2+ assisted driving and L4 robotaxis. Uber London robotaxi trial 2026.",
+      url: "https://wayve.ai", regions: ["europe", "emea"] },
+
+    // --- EMEA: Spain ---
+    { name: "PAL Robotics", domain: "pal-robotics.com", lat: 41.3851, lng: 2.1734,
+      address: "Barcelona, Spain", category: "Humanoid / mobile robots",
+      blurb: "TIAGo Pro mobile manipulator, ARI humanoid, REEM-C bipedal. Spain's leading robotics company, sold in 50+ countries.",
+      url: "https://pal-robotics.com", regions: ["europe", "emea"] },
+    { name: "Robotnik Automation", domain: "robotnik.eu", lat: 39.4699, lng: -0.3763,
+      address: "Valencia, Spain", category: "Mobile robots",
+      blurb: "Mobile bases and outdoor AMRs (RB-Vogui, SUMMIT-XL). Part of United Robotics Group.",
+      url: "https://robotnik.eu", regions: ["europe", "emea"] },
+
+    // --- EMEA: Estonia ---
+    { name: "Milrem Robotics", domain: "milremrobotics.com", lat: 59.4370, lng: 24.7536,
+      address: "Tallinn, Estonia", category: "Defense / UGVs",
+      blurb: "THeMIS and Type-X tracked unmanned ground vehicles for combat, logistics, EOD. Supplies 19+ militaries.",
+      url: "https://milremrobotics.com", regions: ["europe", "emea"] },
+    { name: "Starship Technologies", domain: "starship.xyz", lat: 59.4370, lng: 24.7536,
+      address: "Tallinn, Estonia (eng) / SF (HQ)", category: "Delivery robots",
+      blurb: "Sidewalk delivery robots for university campuses, Uber Eats partnerships, urban retail. 10M+ deliveries.",
+      url: "https://starship.xyz", regions: ["europe", "emea"] },
+
+    // --- EMEA: Finland ---
+    { name: "ICEYE", domain: "iceye.com", lat: 60.2055, lng: 24.6559,
+      address: "Espoo, Finland", category: "Space / satellites",
+      blurb: "SAR satellite constellation for defense, intelligence, flood monitoring, insurance. Europe's leading non-US SAR provider.",
+      url: "https://iceye.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: Portugal ---
+    { name: "Tekever", domain: "tekever.com", lat: 38.7223, lng: -9.1393,
+      address: "Lisbon, Portugal", category: "Drones (defense / maritime)",
+      blurb: "AR3 and AR5 long-endurance maritime surveillance UAVs for European militaries. Supplies UK MoD and Ukraine.",
+      url: "https://tekever.com", regions: ["europe", "emea"] },
+
+    // --- EMEA: Israel ---
+    { name: "Tevel Aerobotics", domain: "tevel-tech.com", lat: 31.8147, lng: 34.7775,
+      address: "Gedera, Israel", category: "Agricultural / drones",
+      blurb: "Tethered Flying Autonomous Robots that pick fruit (apples, peaches, citrus). Kubota-backed.",
+      url: "https://tevel-tech.com", regions: ["emea"] },
+    { name: "XTEND", domain: "xtend.us", lat: 32.0853, lng: 34.7818,
+      address: "Tel Aviv, Israel", category: "Drones (defense)",
+      blurb: "XOS operating system plus combat-proven indoor/outdoor drones (Wolverine, Scorpio). IDF and US DoD customers.",
+      url: "https://xtend.us", regions: ["emea"] }
   ];
 
   const map = L.map('map', { zoomControl: true }).setView([37.62, -122.30], 11);
